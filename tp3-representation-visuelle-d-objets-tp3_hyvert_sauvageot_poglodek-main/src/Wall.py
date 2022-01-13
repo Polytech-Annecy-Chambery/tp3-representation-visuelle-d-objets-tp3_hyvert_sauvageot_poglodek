@@ -32,7 +32,9 @@ class Wall:
         if 'thickness' not in self.parameters:
             self.parameters['thickness'] = 0.2    
         if 'color' not in self.parameters:
-            self.parameters['color'] = [0.5, 0.5, 0.5]       
+            self.parameters['color'] = [0.5, 0.5, 0.5] 
+        if 'edges' not in self.parameters:
+            self.parameters['edges'] = False  
             
         # Objects list
         self.objects = []
@@ -41,8 +43,10 @@ class Wall:
         self.parentSection = Section({'width': self.parameters['width'], \
                                       'height': self.parameters['height'], \
                                       'thickness': self.parameters['thickness'], \
-                                      'color': self.parameters['color'],
-                                      'position': self.parameters['position']})
+                                      'color': self.parameters['color'], \
+                                      'position': self.parameters['position'], \
+                                      'edges' : self.parameters['edges']
+                                      })
         self.objects.append(self.parentSection) 
         
     # Getter
@@ -62,12 +66,28 @@ class Wall:
         return None
     
     # Adds an object    
-    def add(self, x):    
+    def add(self, x):       
         # A compléter en remplaçant pass par votre code
         pass        
                     
     # Draws the faces
     def draw(self):
-        # A compléter en remplaçant pass par votre code
-        pass
+        gl.glPushMatrix()
+        if self.parameters['edges']:
+            gl.glTranslatef(self.parameters['position'][0],self.parameters['position'][1],self.parameters['position'][2])   
+            gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_LINE) # on trace les faces : GL_FILL
+            gl.glBegin(gl.GL_QUADS) # Tracé d’un quadrilatère
+            gl.glColor3fv([self.parameters['color'][0]*0.8, self.parameters['color'][1]*0.8, self.parameters['color'][2]*0.8])
+       
+        gl.glRotate(self.parameters['orientation'],0,0,1)   
+        gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL) # on trace les faces : GL_FILL
+        gl.glBegin(gl.GL_QUADS) # Tracé d’un quadrilatère
+        gl.glColor3fv([0.5, 0.5, 0.5]) # Couleur gris moyen
+            
+            
+        gl.glEnd()
+        gl.glPopMatrix()
+        
+        for x in self.objects:
+            x.draw()
   
